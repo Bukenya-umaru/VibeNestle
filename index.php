@@ -787,6 +787,46 @@
         .dark-mode .btn-outline-primary:hover {
             background-color: rgba(76, 175, 80, 0.1);
         }
+        /* Mobile-only: keep the three feature cards on one line for phone screens */
+        @media only screen and (max-width: 767px) {
+            .features-inline-mobile {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: 0.5rem;
+                padding-bottom: 6px;
+            }
+
+            .features-inline-mobile > div {
+                flex: 0 0 33.3333% !important;
+                max-width: 33.3333% !important;
+                min-width: 33.3333% !important;
+                box-sizing: border-box;
+                padding-left: 0.35rem;
+                padding-right: 0.35rem;
+            }
+
+            .features-inline-mobile .feature-card {
+                padding: 0.8rem !important;
+                height: 100% !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .features-inline-mobile .feature-card h3 {
+                font-size: 0.95rem !important;
+                margin: 0.25rem 0 !important;
+            }
+
+            .features-inline-mobile .feature-card p {
+                font-size: 0.75rem !important;
+                margin: 0 !important;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -914,7 +954,7 @@
 
         <!-- Features Section -->
         <div class="container">
-            <div class="row mb-5 text-center">
+            <div class="row mb-5 text-center features-inline-mobile">
                 <div class="col-md-4 mb-4">
                     <div class="p-4 bg-white rounded-lg shadow-sm feature-card">
                         <i class="fas fa-music fa-3x mb-3" style="color: var(--primary-color);"></i>

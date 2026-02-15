@@ -51,6 +51,12 @@
             background: #fff;
             margin-bottom: 10px;
         }
+        .artist-card img {
+            height: 160px;
+            object-fit: cover;
+            width: 100%;
+            display: block;
+        }
         .artist-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -182,12 +188,26 @@
             }
         }
         @media (max-width: 576px) {
-            .artist-card img, .artist-card > div {
-                height: 150px !important;
+            /* Slightly shorter image and allow the artist name to wrap so full name is visible on phones */
+            .artist-card img {
+                height: 1400px !important;
+                object-fit: cover !important;
             }
-            .artist-card .card-body {
+
+            .artist-card > .card-body {
+                height: auto !important;
                 padding: 8px;
             }
+
+            .artist-card .card-title {
+                white-space: normal !important;
+                overflow: visible !important;
+                text-overflow: unset !important;
+                font-size: 1rem !important;
+                line-height: 1.1;
+            }
+
+            /* Keep layout padding on small screens */
             .container {
                 padding: 0 10px;
             }
@@ -459,9 +479,9 @@
                         echo "<a href='artists.php?artist_id=" . $artist['id'] . "' class='text-decoration-none'>";
                         echo "<div class='card h-100 artist-card'>";
                         if ($artist['image_path']) {
-                            echo "<img src='" . htmlspecialchars($artist['image_path']) . "' style='width: 100%; height: 200px; object-fit: cover;' alt='Artist'>";
+                            echo "<img src='" . htmlspecialchars($artist['image_path']) . "' style='width: 100%; height: 160px; object-fit: cover;' alt='Artist'>";
                         } else {
-                            echo "<div style='height: 200px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;'>";
+                            echo "<div style='height: 160px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;'>";
                             echo "<i class='fas fa-user-circle fa-5x' style='color: var(--primary-color);'></i>";
                             echo "</div>";
                         }

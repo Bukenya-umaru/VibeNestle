@@ -52,6 +52,71 @@ body {
         padding: 0.3rem 0.5rem !important;
     }
 
+/* Mobile-specific artist grid: 5 compact items per row, hide items after 20 (mobile only) */
+@media (max-width: 576px) {
+    /* Use the artists list id from artists.php and make it a compact grid */
+    #artistsList {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+        align-items: start;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Ensure each bootstrap column acts like a grid item */
+    #artistsList > div {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Compact artist card styling for small screens */
+    #artistsList .artist-card {
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 0;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    /* Make images very short and cover to fit five across */
+    #artistsList .artist-card img {
+        width: 100%;
+        height: 64px !important;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Reduce spacing inside the card and hide long text to keep things compact */
+    #artistsList .artist-card .card-body {
+        padding: 4px 3px !important;
+        background: rgba(255,255,255,0.9);
+    }
+    #artistsList .artist-card .card-title {
+        font-size: 0.65rem !important;
+        margin: 0;
+        line-height: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #artistsList .artist-card .card-text {
+        display: none !important;
+    }
+
+    /* Hide any artists after the 20th on small (mobile) screens only */
+    #artistsList > div:nth-child(n+21) {
+        display: none !important;
+    }
+
+    /* Slight touch: reduce font sizes for badges/nav that may bleed into mobile */
+    .nav-link, .btn-outline-primary {
+        font-size: 0.78rem !important;
+        padding: 0.18rem 0.28rem !important;
+    }
+}
+
     .navbar .container {
         display: flex;
         align-items: center;
@@ -120,5 +185,70 @@ body {
     .navbar, .navbar .container {
         white-space: nowrap;
         overflow-x: visible;
+    }
+}
+
+/* Mobile-only: show 5 compact artist cards per row and center them */
+@media (max-width: 600px) {
+    /* Make the artists list a wrapping flex grid, center items, use gap for gutters */
+    #artistsList {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Each artist column takes 1/5 of the remaining width minus gutters */
+    #artistsList > div {
+        flex: 0 0 calc((100% - 24px) / 5);
+        max-width: calc((100% - 24px) / 5);
+        padding: 0;
+        box-sizing: border-box;
+        margin-bottom: 6px;
+    }
+
+    /* Make the artist card compact so it fits on all phone sizes */
+    #artistsList .artist-card {
+        border-radius: 6px;
+        overflow: hidden;
+        background: #fff;
+        margin: 0;
+    }
+
+    /* Reduce image height and ensure cover behavior */
+    #artistsList .artist-card img {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Smaller title and description to keep cards compact */
+    #artistsList .card-title {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #artistsList .card-text {
+        font-size: 0.7rem;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Hide any artists beyond the first 20 on small/mobile screens */
+    #artistsList > div:nth-child(n+21) {
+        display: none !important;
+    }
+
+    /* Reduce container side padding so 5 columns fit on narrow devices */
+    .container {
+        padding-left: 8px;
+        padding-right: 8px;
     }
 }
