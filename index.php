@@ -675,6 +675,64 @@
             text-decoration: none;
         }
 
+        /* Footer: force the three sections to sit inline and keep content compact */
+        .footer .footer-top {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            flex-wrap: nowrap;
+        }
+
+        .footer .footer-top > div {
+            flex: 1 1 0;
+            min-width: 0; /* allow children to shrink to prevent horizontal scroll */
+        }
+
+        .footer .footer-top h5 {
+            margin-bottom: 0.35rem;
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        .footer .footer-top p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .footer .footer-top ul {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .footer .footer-top ul li {
+            margin: 0;
+            padding: 0;
+            font-size: 0.85rem;
+        }
+
+        .footer .connect-with-us-section .d-flex a {
+            font-size: 1rem;
+        }
+
+        @media (max-width: 767px) {
+            .footer .footer-top {
+                gap: 0.5rem;
+            }
+            .footer .footer-top h5 { font-size: 0.9rem; }
+            .footer .footer-top p,
+            .footer .footer-top ul li a,
+            .footer .connect-with-us-section .d-flex a {
+                font-size: 0.72rem;
+            }
+            .footer .footer-top ul { gap: 0.35rem; }
+            .footer { overflow-x: hidden; }
+        }
+
         .footer hr {
             border-color: #444;
             margin: 1.5rem 0;
@@ -824,6 +882,50 @@
             .features-inline-mobile .feature-card p {
                 font-size: 0.75rem !important;
                 margin: 0 !important;
+            }
+        }
+
+        /* Hide Connect With Us on desktop - show only on mobile */
+        .connect-with-us-section {
+            display: none !important;
+        }
+
+        /* Mobile-only fix: prevent footer horizontal scroll on phones */
+        @media only screen and (max-width: 767px) {
+            .footer {
+                overflow-x: hidden;
+                width: 100%;
+                box-sizing: border-box;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .footer .container {
+                max-width: 100% !important;
+                overflow-x: hidden;
+                box-sizing: border-box;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .footer .row {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            .footer .col-lg-4, .footer .col-md-6 {
+                max-width: 100%;
+                overflow-x: hidden;
+                word-wrap: break-word;
+                word-break: break-word;
+            }
+            .footer img, .footer iframe, .footer svg {
+                max-width: 100%;
+                height: auto;
+            }
+            .footer * {
+                box-sizing: border-box;
+            }
+            /* Show Connect With Us on mobile only */
+            .connect-with-us-section {
+                display: block !important;
             }
         }
 
@@ -2190,7 +2292,7 @@
     <!-- Footer -->
     <footer class="footer mt-5 py-4" style="background: linear-gradient(45deg, #1a1a1a, #2d2d2d);">
         <div class="container">
-            <div class="row g-4">
+            <div class="row g-4 footer-top">
                 <div class="col-lg-4 mb-3">
                     <h5 class="text-white mb-3"><i class="fas fa-music me-2"></i>VibeNestle</h5>
                     <p class="text-muted">Your one-stop destination for discovering and downloading quality music. Stream and download your favorite tracks anytime, anywhere.</p>
@@ -2204,7 +2306,7 @@
                         <li><a href="about.php" class="text-muted text-decoration-none"><i class="fas fa-info-circle me-2"></i>About</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 connect-with-us-section">
                     <h5 class="text-white mb-3">Connect With Us</h5>
                     <div class="d-flex gap-3">
                         <a href="#" class="text-muted fs-4"><i class="fab fa-facebook"></i></a>

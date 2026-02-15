@@ -47,6 +47,90 @@
             margin-top: auto;
         }
 
+        /* About.php-specific footer tweaks: make headings and items horizontal and compact on small screens */
+        .site-footer .row.g-4 {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .site-footer .col-lg-4 {
+            flex: 1 1 33%;
+            min-width: 120px;
+        }
+
+        .site-footer ul {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            flex-wrap: nowrap;
+            overflow: hidden;
+        }
+
+        .site-footer ul li {
+            margin: 0;
+            padding: 0;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .site-footer h5 {
+            font-size: 1rem;
+            margin-bottom: 0.35rem;
+            white-space: nowrap;
+        }
+
+        .site-footer p, .site-footer .text-white-50 {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .site-footer .d-flex a {
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .site-footer .row.g-4 {
+                flex-wrap: nowrap;
+            }
+
+            .site-footer .col-lg-4 {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+
+            .site-footer h5 {
+                font-size: 0.9rem;
+            }
+
+            .site-footer ul li {
+                font-size: 0.8rem;
+            }
+
+            .site-footer p, .site-footer .text-white-50 {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .site-footer h5 {
+                font-size: 0.82rem;
+            }
+
+            .site-footer ul li {
+                font-size: 0.7rem;
+            }
+
+            .site-footer p, .site-footer .text-white-50 {
+                font-size: 0.72rem;
+            }
+        }
+
         .dark-mode {
             background: #1a1a1a;
             color: #f1f1f1;
@@ -225,7 +309,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer site-footer">
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4 mb-3">

@@ -187,6 +187,41 @@
                 font-size: 0.65rem;
             }
         }
+        /* Mobile compact search: keep input and button inline and small on phones */
+        @media (max-width: 767.98px) {
+            .search-form {
+                max-width: 100% !important;
+                margin: 0 8px 12px !important;
+            }
+            .search-form .input-group {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                gap: 6px;
+                align-items: center;
+            }
+            .search-form .form-control {
+                padding: 6px 8px !important;
+                font-size: 0.95rem !important;
+                height: 36px !important;
+                line-height: 1 !important;
+                border-radius: 6px !important;
+                flex: 1 1 auto !important;
+                min-width: 0 !important;
+            }
+            .search-form .input-group > .btn {
+                padding: 6px 10px !important;
+                font-size: 0.95rem !important;
+                height: 36px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 6px !important;
+                min-width: 40px !important;
+            }
+            .search-form .input-group .fas {
+                margin-right: 6px !important;
+            }
+        }
         @media (max-width: 576px) {
             /* Slightly shorter image and allow the artist name to wrap so full name is visible on phones */
             .artist-card img {

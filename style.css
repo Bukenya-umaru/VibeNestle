@@ -117,6 +117,88 @@ body {
     }
 }
 
+    /* Footer: make headings and their items horizontal and compact on small screens */
+    .footer h5 {
+        font-size: 1.05rem;
+        margin-bottom: 0.4rem;
+    }
+    .footer p, .footer .list-unstyled a, .footer .list-unstyled li, .footer .d-flex a {
+        color: #dcdde1;
+        font-size: 0.95rem;
+    }
+
+    /* Keep footer columns side-by-side and compact on smaller viewports without horizontal scroll */
+    @media (max-width: 900px) {
+        .footer .row.g-4 {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .footer .row.g-4 > div {
+            flex: 1 1 33%;
+            min-width: 110px;
+            max-width: 33%;
+            padding-right: 6px;
+            box-sizing: border-box;
+        }
+
+        /* Make quick links display inline and wrap if needed */
+        .footer .list-unstyled {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding-left: 0;
+            margin: 0;
+            align-items: center;
+        }
+        .footer .list-unstyled li {
+            margin: 0;
+            padding: 0;
+        }
+        .footer .list-unstyled a {
+            font-size: 0.82rem;
+            white-space: nowrap;
+            padding: 2px 6px;
+        }
+
+        /* Reduce social icon size so they stay compact */
+        .footer .d-flex a {
+            font-size: 0.95rem;
+            line-height: 1;
+            padding: 4px 6px;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Avoid horizontal overflow */
+        .footer, .footer .container {
+            overflow-x: hidden;
+        }
+    }
+
+    /* Extra compact tweaks for very small screens */
+    @media (max-width: 480px) {
+        .footer .row.g-4 > div {
+            flex: 1 1 33%;
+            min-width: 100px;
+            max-width: 40%;
+        }
+        .footer h5 {
+            font-size: 0.95rem;
+        }
+        .footer .list-unstyled a {
+            font-size: 0.72rem;
+            padding: 2px 4px;
+        }
+        .footer .d-flex a {
+            font-size: 0.9rem;
+        }
+    }
     .navbar .container {
         display: flex;
         align-items: center;
