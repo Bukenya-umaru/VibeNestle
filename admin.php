@@ -436,7 +436,7 @@ if(isset($_POST['add_artist'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="<?php echo (!empty($settings['night_mode']) ? 'night' : ''); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -451,12 +451,54 @@ if(isset($_POST['add_artist'])) {
             --text-color: <?php echo ($settings['night_mode'] ? '#eef2ff' : htmlspecialchars($settings['text_color'])); ?>;
             --font-size: <?php echo htmlspecialchars($settings['font_size']); ?>px;
             --page-bg: <?php echo ($settings['night_mode'] ? '#0f1724' : (htmlspecialchars($settings['page_color'] ?? '#ffffff'))); ?>;
+            --sidebar-bg: <?php echo ($settings['night_mode'] ? '#071022' : 'linear-gradient(180deg,#ffffff,#fbfbff)'); ?>;
+            --nav-link-color: <?php echo ($settings['night_mode'] ? '#eef2ff' : '#334155'); ?>;
         }
+        /* Force all text to use the theme text color when night mode is active */
+        .night, .night * { color: var(--text-color) !important; }
+
+        /* Dark-mode form, modal and table adjustments */
+        .night .form-control, .night select.form-control, .night textarea.form-control {
+            background: transparent !important;
+            color: var(--text-color) !important;
+            border-color: rgba(255,255,255,0.08) !important;
+            box-shadow: none !important;
+        }
+
+        .night .form-control::placeholder, .night textarea::placeholder {
+            color: rgba(238,242,255,0.7) !important;
+        }
+
+        .night .card, .night .modal-content, .night .dropdown-menu {
+            background: var(--card-bg) !important;
+            color: var(--text-color) !important;
+            border-color: rgba(255,255,255,0.04) !important;
+        }
+
+        .night .table, .night table {
+            color: var(--text-color) !important;
+            border-color: rgba(255,255,255,0.04) !important;
+        }
+
+        .night .table thead th, .night .table tbody td {
+            background: transparent !important;
+            color: var(--text-color) !important;
+        }
+
+        .night .modal-header, .night .modal-body, .night .modal-footer {
+            background: transparent !important;
+            color: var(--text-color) !important;
+        }
+
+        .night .artist-card { background: rgba(255,255,255,0.02); }
+
+        .night .btn-outline-primary { border-color: rgba(255,255,255,0.12); color: var(--text-color) !important; }
+        .night .btn-primary { color: white !important; }
         body { font-family: 'Poppins', sans-serif; color:var(--text-color); font-size:var(--font-size); background: var(--page-bg); }
-        .sidebar { background: linear-gradient(180deg,#ffffff,#fbfbff); min-height:100vh; padding:2rem 1rem; border-right:1px solid rgba(15,23,36,0.04); }
+        .sidebar { background: var(--sidebar-bg); min-height:100vh; padding:2rem 1rem; border-right:1px solid rgba(15,23,36,0.04); }
         .main-content { padding:2.25rem; }
-        .card { border:none; border-radius:12px; box-shadow:0 8px 30px rgba(15,23,42,0.06); }
-        .nav-link { color: #334155; padding:0.7rem 1rem; border-radius:10px; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.6rem; }
+        .card { background:var(--card-bg); border:none; border-radius:12px; box-shadow:0 8px 30px rgba(15,23,42,0.06); }
+        .nav-link { color: var(--nav-link-color); padding:0.7rem 1rem; border-radius:10px; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.6rem; }
         .nav-link:hover, .nav-link.active { background: rgba(0,0,0,0.04); color: var(--accent); transform:translateY(-1px); }
         .form-control { border-radius:10px; padding:0.7rem 1rem; border:1px solid rgba(15,23,42,0.06); }
         .artist-card { padding:8px; transition:all 180ms ease; }
@@ -1075,10 +1117,18 @@ if(isset($_POST['add_artist'])) {
                 if(isNight){
                     document.documentElement.style.setProperty('--page-bg', '#0f1724');
                     document.documentElement.style.setProperty('--text-color', '#eef2ff');
+                    document.documentElement.style.setProperty('--sidebar-bg', '#071022');
+                    document.documentElement.style.setProperty('--nav-link-color', '#eef2ff');
+                    document.documentElement.style.setProperty('--card-bg', '#0b1224');
                 } else {
                     document.documentElement.style.setProperty('--page-bg', 'linear-gradient(180deg,#f6f8fb,#eef2ff)');
                     document.documentElement.style.setProperty('--text-color', '<?php echo htmlspecialchars($settings['text_color']); ?>');
+                    document.documentElement.style.setProperty('--sidebar-bg', 'linear-gradient(180deg,#ffffff,#fbfbff)');
+                    document.documentElement.style.setProperty('--nav-link-color', '#334155');
+                    document.documentElement.style.setProperty('--card-bg', '<?php echo htmlspecialchars($settings['card_bg']); ?>');
                 }
+                // Toggle a class so we can force all text to follow the theme color
+                document.documentElement.classList.toggle('night', isNight);
 
                 if(fontInput){
                     var v = parseInt(fontInput.value) || <?php echo intval($settings['font_size']); ?>;
