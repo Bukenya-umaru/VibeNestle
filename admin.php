@@ -2,6 +2,58 @@
 session_start();
 include 'db_connect.php';
 
+// Load admin customization settings (stored in JSON)
+$settings_file = __DIR__ . DIRECTORY_SEPARATOR . 'admin_settings.json';
+$default_settings = [
+    'accent' => '#4c51bf',
+    'bg_type' => 'image', // 'image' or 'color' or 'none'
+        'bg_value' => 'https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg?auto=compress&cs=tinysrgb&w=1600',
+        'page_color' => '#eef2ff',
+    'card_bg' => '#ffffff',
+    'text_color' => '#0f1724',
+    'font_size' => '16'
+];
+$settings = $default_settings;
+if(file_exists($settings_file)) {
+    $json = @file_get_contents($settings_file);
+    $parsed = @json_decode($json, true);
+    if(is_array($parsed)) $settings = array_merge($default_settings, $parsed);
+}
+
+// Handle customization save
+if(isset($_POST['save_customization'])) {
+    $accent = preg_replace('/[^#A-Fa-f0-9]/', '', $_POST['accent'] ?? $default_settings['accent']);
+    $bg_type = in_array($_POST['bg_type'] ?? '', ['image','color','none']) ? $_POST['bg_type'] : 'image';
+    $bg_value = trim($_POST['bg_value'] ?? '');
+    $page_color = preg_replace('/[^#A-Fa-f0-9]/', '', $_POST['page_color'] ?? $default_settings['page_color']);
+    $card_bg = trim($_POST['card_bg'] ?? $default_settings['card_bg']);
+    $text_color = trim($_POST['text_color'] ?? $default_settings['text_color']);
+    $font_size = preg_replace('/[^0-9]/','', $_POST['font_size'] ?? $default_settings['font_size']);
+
+    $new = [
+        'accent' => $accent ?: $default_settings['accent'],
+        'bg_type' => $bg_type,
+        'bg_value' => $bg_value ?: $default_settings['bg_value'],
+        'page_color' => $page_color ?: $default_settings['page_color'],
+        'card_bg' => $card_bg ?: $default_settings['card_bg'],
+        'text_color' => $text_color ?: $default_settings['text_color'],
+        'font_size' => $font_size ?: $default_settings['font_size']
+    ];
+
+    @file_put_contents($settings_file, json_encode($new, JSON_PRETTY_PRINT));
+    $_SESSION['success'] = 'Customization saved';
+    header('Location: admin.php#customize');
+    exit;
+}
+
+// Handle customization reset
+if(isset($_POST['reset_customization'])) {
+    @file_put_contents($settings_file, json_encode($default_settings, JSON_PRETTY_PRINT));
+    $_SESSION['success'] = 'Customization reset to defaults';
+    header('Location: admin.php#customize');
+    exit;
+}
+
 // Admin credentials - you should change these
 define('ADMIN_USERNAME', 'admin');
 define('ADMIN_PASSWORD', 'password'); // Change this to a secure password
@@ -38,30 +90,45 @@ if(!isset($_SESSION['admin_logged_in'])) {
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
-                background: linear-gradient(135deg, #6e8efb, #a777e3);
                 height: 100vh;
+                margin: 0;
+                background: url('https://images.pexels.com/photos/3244513/pexels-photo-3244513.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat fixed;
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
+            .overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(10, 15, 25, 0.45);
+                backdrop-filter: blur(4px);
+            }
             .login-container {
-                background: white;
-                padding: 2rem;
-                border-radius: 15px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                background: rgba(255,255,255,0.96);
+                padding: 2.25rem;
+                border-radius: 14px;
+                box-shadow: 0 12px 35px rgba(7,12,34,0.45);
                 width: 100%;
-                max-width: 400px;
+                max-width: 460px;
+                z-index: 2;
+            }
+            .login-brand {
+                display:flex; align-items:center; gap:12px; margin-bottom:12px;
+            }
+            .brand-logo {
+                width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,#6e8efb,#a777e3); display:inline-flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:20px;
             }
             .login-container h1 {
-                color: #4a5568;
-                font-size: 1.5rem;
-                margin-bottom: 1.5rem;
-                text-align: center;
+                color: #102a43;
+                font-size: 1.25rem;
+                margin: 0 0 0.35rem 0;
             }
-            .form-control {
-                border-radius: 10px;
-                padding: 0.75rem 1rem;
+            .login-sub {
+                color:#475569; font-size:0.95rem; margin-bottom:1rem;
             }
+            .form-control { border-radius:10px; padding:0.75rem 1rem; }
+            .btn-primary { border-radius:10px; padding:0.65rem 1rem; }
+            .login-note { font-size:0.85rem; color:#64748b; margin-top:0.6rem; text-align:center; }
         </style>
     </head>
     <body>
@@ -107,30 +174,45 @@ if(!isset($_SESSION['admin_logged_in'])) {
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
-                background: linear-gradient(135deg, #6e8efb, #a777e3);
                 height: 100vh;
+                margin: 0;
+                background: url('https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat fixed;
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
+            .overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(10, 15, 25, 0.45);
+                backdrop-filter: blur(4px);
+            }
             .login-container {
-                background: white;
-                padding: 2rem;
-                border-radius: 15px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                background: rgba(255,255,255,0.96);
+                padding: 2.25rem;
+                border-radius: 14px;
+                box-shadow: 0 12px 35px rgba(7,12,34,0.45);
                 width: 100%;
-                max-width: 400px;
+                max-width: 460px;
+                z-index: 2;
+            }
+            .login-brand {
+                display:flex; align-items:center; gap:12px; margin-bottom:12px;
+            }
+            .brand-logo {
+                width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,#4c51bf,#6e8efb); display:inline-flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:20px;
             }
             .login-container h1 {
-                color: #4a5568;
-                font-size: 1.5rem;
-                margin-bottom: 1.5rem;
-                text-align: center;
+                color: #102a43;
+                font-size: 1.25rem;
+                margin: 0 0 0.35rem 0;
             }
-            .form-control {
-                border-radius: 10px;
-                padding: 0.75rem 1rem;
+            .login-sub {
+                color:#475569; font-size:0.95rem; margin-bottom:1rem;
             }
+            .form-control { border-radius:10px; padding:0.75rem 1rem; }
+            .btn-primary { border-radius:10px; padding:0.65rem 1rem; }
+            .login-note { font-size:0.85rem; color:#64748b; margin-top:0.6rem; text-align:center; }
         </style>
     </head>
     <body>
@@ -183,7 +265,7 @@ if(isset($_GET['delete_artist'])) {
 
     $stmt = $conn->prepare("DELETE FROM artists WHERE id = ?");
     $stmt->execute([$artist_id]);
-    header("Location: admin.php");
+    header("Location: admin.php#artists");
     exit;
 }
 
@@ -343,6 +425,8 @@ if(isset($_POST['add_artist'])) {
     
     $stmt = $conn->prepare("INSERT INTO artists (name, bio, image_path) VALUES (?, ?, ?)");
     $stmt->execute([$name, $bio, $image_path]);
+    header("Location: admin.php#artists");
+    exit;
 }
 ?>
 
@@ -356,39 +440,36 @@ if(isset($_POST['add_artist'])) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f8f9fa;
+        :root{
+            --accent: <?php echo htmlspecialchars($settings['accent']); ?>;
+            --card-bg: <?php echo htmlspecialchars($settings['card_bg']); ?>;
+            --text-color: <?php echo htmlspecialchars($settings['text_color']); ?>;
+            --font-size: <?php echo htmlspecialchars($settings['font_size']); ?>px;
+            --page-bg: <?php echo htmlspecialchars($settings['page_color'] ?? '#eef2ff'); ?>;
         }
-        .sidebar {
-            background: white;
-            min-height: 100vh;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            padding: 2rem 1rem;
-        }
-        .main-content {
-            padding: 2rem;
-        }
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .nav-link {
-            color: #4a5568;
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s;
-        }
-        .nav-link:hover, .nav-link.active {
-            background: #f8f9fa;
-            color: #4c51bf;
-        }
-        .form-control {
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-        }
+        body { font-family: 'Poppins', sans-serif; color:var(--text-color); font-size:var(--font-size); }
+        <?php if($settings['bg_type'] === 'image'): ?>
+        body { background: url(<?php echo json_encode($settings['bg_value']); ?>) center/cover no-repeat fixed; }
+        <?php elseif($settings['bg_type'] === 'color'): ?>
+        body { background: <?php echo htmlspecialchars($settings['page_color'] ?? $settings['bg_value']); ?>; }
+        <?php else: ?>
+        body { background: linear-gradient(180deg,#f6f8fb,#eef2ff); }
+        <?php endif; ?>
+        .sidebar { background: linear-gradient(180deg,#ffffff,#fbfbff); min-height:100vh; padding:2rem 1rem; border-right:1px solid rgba(15,23,36,0.04); }
+        .main-content { padding:2.25rem; }
+        .card { border:none; border-radius:12px; box-shadow:0 8px 30px rgba(15,23,42,0.06); }
+        .nav-link { color: #334155; padding:0.7rem 1rem; border-radius:10px; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.6rem; }
+        .nav-link:hover, .nav-link.active { background: rgba(0,0,0,0.04); color: var(--accent); transform:translateY(-1px); }
+        .form-control { border-radius:10px; padding:0.7rem 1rem; border:1px solid rgba(15,23,42,0.06); }
+        .artist-card { padding:8px; transition:all 180ms ease; }
+        .artist-card:hover { background: rgba(76,81,191,0.04); transform:translateX(2px); }
+        #artistList img, .artist-card i { vertical-align:middle }
+        #songsTable thead th { background: linear-gradient(90deg, rgba(76,81,191,0.05), rgba(76,81,191,0.02)); }
+        .btn-outline-primary { border-radius:10px; }
+        .accent { color:var(--accent) !important }
+        .btn-accent { background:var(--accent); border-color:var(--accent); color:white; border-radius:8px; padding:.55rem .9rem; box-shadow:0 6px 18px rgba(76,81,191,0.12); }
+        .btn-accent:hover { filter:brightness(.95); transform:translateY(-1px); }
+        .btn-outline-secondary { border-radius:8px; padding:.5rem .85rem; }
     </style>
 </head>
 <body>
@@ -402,6 +483,9 @@ if(isset($_POST['add_artist'])) {
                     </a>
                     <a class="nav-link" href="#artists" data-bs-toggle="tab">
                         <i class="fas fa-user me-2"></i>Artists
+                    </a>
+                    <a class="nav-link" href="#customize" data-bs-toggle="tab">
+                        <i class="fas fa-sliders-h me-2"></i>Customize
                     </a>
                     <a class="nav-link text-danger" href="?logout=1">
                         <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -430,49 +514,78 @@ if(isset($_POST['add_artist'])) {
                 <?php endif; ?>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="songs">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
                             <h2>Manage Songs</h2>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSongModal">
-                                <i class="fas fa-plus me-2"></i>Add New Song
-                            </button>
+                            <div>
+                                <button id="globalAddSongBtn" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addSongModal">
+                                    <i class="fas fa-plus me-2"></i>Add New Song
+                                </button>
+                            </div>
                         </div>
-                        
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Image</th>
-                                                <th>Title</th>
-                                                <th>Artist</th>
-                                                <th>Genre</th>
-                                                <th>Upload Date</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <input id="artistSearch" type="text" class="form-control" placeholder="Search artists...">
+                                        </div>
+                                        <div id="artistList" style="max-height:420px; overflow:auto">
                                             <?php
-                                            $stmt = $conn->query("SELECT s.*, a.name as artist_name, DATE_FORMAT(s.upload_date, '%Y-%m-%d %H:%i') as upload_date FROM songs s LEFT JOIN artists a ON s.artist_id = a.id");
-                                            while($song = $stmt->fetch()) {
-                                                echo "<tr>";
-                                                echo "<td>" . ($song['image_path'] ? "<img src='" . htmlspecialchars($song['image_path']) . "' width='50' height='50' class='rounded'>" : "<i class='fas fa-music fa-2x'></i>") . "</td>";
-                                                echo "<td>" . htmlspecialchars($song['title']) . "</td>";
-                                                echo "<td>" . htmlspecialchars($song['artist_name']) . "</td>";
-                                                echo "<td>" . htmlspecialchars($song['genre']) . "</td>";
-                                                echo "<td>" . $song['upload_date'] . "</td>";
-                                                echo "<td>
-                                                    <button class='btn btn-sm btn-warning me-2' onclick='editSong(" . json_encode($song) . ")'><i class='fas fa-edit'></i></button>
-                                                    <a href='?delete_song=" . $song['id'] . "' class='btn btn-sm btn-danger' onclick='return confirm(\"Are you sure you want to delete this song?\")'><i class='fas fa-trash'></i></a>
-                                                </td>";
-                                                echo "</tr>";
+                                            $artistStmt = $conn->query("SELECT id, name, image_path FROM artists ORDER BY name");
+                                            while($a = $artistStmt->fetch()) {
+                                                $img = $a['image_path'] ? "<img src='" . htmlspecialchars($a['image_path']) . "' class='rounded-circle me-2' width='40' height='40'>" : "<i class='fas fa-user-circle fa-2x me-2'></i>";
+                                                echo "<div class='d-flex align-items-center mb-2 artist-card' data-artist-id='" . $a['id'] . "' style='cursor:pointer' onclick='selectArtist(" . $a['id'] . ", " . json_encode($a['name']) . ")'>";
+                                                echo $img . "<div>" . htmlspecialchars($a['name']) . "</div>";
+                                                echo "</div>";
                                             }
                                             ?>
-                                        </tbody>
-                                    </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <h5 id="selectedArtistTitle">All Songs</h5>
+                                                <small id="selectedArtistCount" class="text-muted"></small>
+                                            </div>
+                                            <div class="d-flex">
+                                                <input id="songSearch" type="text" class="form-control me-2" placeholder="Search songs by title or genre...">
+                                                <button id="addSongForArtistBtn" class="btn btn-outline-primary" style="display:none"><i class="fas fa-plus me-1"></i>Add for Artist</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <table class="table" id="songsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Image</th>
+                                                        <th>Title</th>
+                                                        <th>Artist</th>
+                                                        <th>Genre</th>
+                                                        <th>Upload Date</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Populated by JS -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <?php
+                        // Provide songs JSON for client-side filtering and operations
+                        $allSongsStmt = $conn->query("SELECT s.*, a.name as artist_name, DATE_FORMAT(s.upload_date, '%Y-%m-%d %H:%i') as upload_date FROM songs s LEFT JOIN artists a ON s.artist_id = a.id ORDER BY s.upload_date DESC");
+                        $allSongs = $allSongsStmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
                     </div>
                     
                     <div class="tab-pane fade" id="artists">
@@ -518,6 +631,80 @@ if(isset($_POST['add_artist'])) {
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="customize">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h2>Customize Your Page</h2>
+                                <p class="text-muted">Change colors, background and fonts to personalise the admin view.</p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="post">
+                                    <div class="row gy-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Accent Color</label>
+                                            <input type="color" name="accent" value="<?php echo htmlspecialchars($settings['accent']); ?>" class="form-control form-control-color">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Card Background</label>
+                                            <input type="color" name="card_bg" value="<?php echo htmlspecialchars($settings['card_bg']); ?>" class="form-control form-control-color">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Text Color</label>
+                                            <input type="color" name="text_color" value="<?php echo htmlspecialchars($settings['text_color']); ?>" class="form-control form-control-color">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Page Background Color</label>
+                                            <input type="color" name="page_color" value="<?php echo htmlspecialchars($settings['page_color'] ?? '#eef2ff'); ?>" class="form-control form-control-color">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Font Size (px)</label>
+                                            <input type="number" name="font_size" min="12" max="22" value="<?php echo htmlspecialchars($settings['font_size']); ?>" class="form-control">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Background Type</label>
+                                            <select name="bg_type" class="form-control">
+                                                <option value="image" <?php echo ($settings['bg_type'] === 'image') ? 'selected' : ''; ?>>Image</option>
+                                                <option value="color" <?php echo ($settings['bg_type'] === 'color') ? 'selected' : ''; ?>>Solid Color</option>
+                                                <option value="none" <?php echo ($settings['bg_type'] === 'none') ? 'selected' : ''; ?>>Default Gradient</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Background Value (image URL or color)</label>
+                                            <input type="text" name="bg_value" value="<?php echo htmlspecialchars($settings['bg_value']); ?>" class="form-control" placeholder="Paste an image URL from Pexels or a color hex #">
+                                            <small class="text-muted">Tip: use Pexels images — e.g. https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg</small>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" name="save_customization" class="btn btn-accent">Save Changes</button>
+                                                <button type="submit" name="reset_customization" class="btn btn-outline-secondary">Reset Defaults</button>
+                                                <div class="ms-auto">
+                                                    <div class="preview p-3" style="background:var(--card-bg); border-radius:8px; box-shadow:0 6px 18px rgba(15,23,42,0.06);">
+                                                        <div style="display:flex; align-items:center; gap:12px">
+                                                            <div style="width:40px;height:40px;background:var(--accent);border-radius:8px"></div>
+                                                            <div>
+                                                                <div style="font-weight:600">Preview Title</div>
+                                                                <div style="font-size:13px;color:#6b7280">Preview subtitle</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -616,7 +803,7 @@ if(isset($_POST['add_artist'])) {
                             <input type="text" name="title" id="edit_title" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <select name="artist_id" id="edit_artist_id" class="form-control" required>
+                            <select name="artist_id" id="edit_song_artist_id" class="form-control" required>
                                 <?php
                                 $stmt = $conn->query("SELECT id, name FROM artists");
                                 while($artist = $stmt->fetch()) {
@@ -684,7 +871,7 @@ if(isset($_POST['add_artist'])) {
         function editSong(song) {
             document.getElementById('edit_song_id').value = song.id;
             document.getElementById('edit_title').value = song.title;
-            document.getElementById('edit_artist_id').value = song.artist_id;
+            document.getElementById('edit_song_artist_id').value = song.artist_id;
             document.getElementById('edit_genre').value = song.genre;
             document.getElementById('edit_current_audio').value = song.audio_path;
             document.getElementById('edit_current_image').value = song.image_path;
@@ -740,6 +927,110 @@ if(isset($_POST['add_artist'])) {
             new bootstrap.Modal(document.getElementById('editArtistModal')).show();
         }
 
+        // --- Dynamic songs & artists UI ---
+        var allSongs = <?php echo json_encode($allSongs ?? []); ?>;
+        var selectedArtistId = null;
+
+        function renderSongs(list) {
+            var tbody = document.querySelector('#songsTable tbody');
+            tbody.innerHTML = '';
+            list.forEach(function(song) {
+                var tr = document.createElement('tr');
+
+                var imgTd = document.createElement('td');
+                if (song.image_path) {
+                    imgTd.innerHTML = "<img src='" + song.image_path + "' width='50' height='50' class='rounded'>";
+                } else {
+                    imgTd.innerHTML = "<i class='fas fa-music fa-2x'></i>";
+                }
+
+                var titleTd = document.createElement('td');
+                titleTd.textContent = song.title;
+
+                var artistTd = document.createElement('td');
+                artistTd.textContent = song.artist_name || '';
+
+                var genreTd = document.createElement('td');
+                genreTd.textContent = song.genre || '';
+
+                var dateTd = document.createElement('td');
+                dateTd.textContent = song.upload_date || '';
+
+                var actionsTd = document.createElement('td');
+                actionsTd.innerHTML = "<button class='btn btn-sm btn-warning me-2' onclick='editSong(" + JSON.stringify(song) + ")'><i class='fas fa-edit'></i></button>" +
+                                      "<a href='?delete_song=" + song.id + "' class='btn btn-sm btn-danger' onclick='return confirm(\"Are you sure you want to delete this song?\")'><i class='fas fa-trash'></i></a>";
+
+                tr.appendChild(imgTd);
+                tr.appendChild(titleTd);
+                tr.appendChild(artistTd);
+                tr.appendChild(genreTd);
+                tr.appendChild(dateTd);
+                tr.appendChild(actionsTd);
+
+                tbody.appendChild(tr);
+            });
+
+            var countEl = document.getElementById('selectedArtistCount');
+            if (countEl) countEl.textContent = list.length + ' song(s)';
+        }
+
+        function selectArtist(id, name) {
+            selectedArtistId = id;
+            document.getElementById('selectedArtistTitle').textContent = name || 'Artist Songs';
+            document.getElementById('addSongForArtistBtn').style.display = 'inline-block';
+
+            // filter songs for artist
+            var filtered = allSongs.filter(function(s){ return parseInt(s.artist_id) === parseInt(id); });
+            var q = document.getElementById('songSearch').value.trim().toLowerCase();
+            if (q) filtered = filtered.filter(function(s){ return (s.title||'').toLowerCase().includes(q) || (s.genre||'').toLowerCase().includes(q); });
+            renderSongs(filtered);
+
+            // highlight selection
+            document.querySelectorAll('.artist-card').forEach(function(el){ el.classList.remove('border','border-primary'); });
+            var el = document.querySelector('.artist-card[data-artist-id="' + id + '"]');
+            if (el) el.classList.add('border','border-primary','rounded');
+        }
+
+        // initial render - all songs
+        renderSongs(allSongs);
+
+        // song search
+        document.getElementById('songSearch').addEventListener('input', function(e){
+            var q = e.target.value.trim().toLowerCase();
+            var list = allSongs.slice();
+            if (selectedArtistId) {
+                list = list.filter(function(s){ return parseInt(s.artist_id) === parseInt(selectedArtistId); });
+            }
+            if (q) {
+                list = list.filter(function(s){ return (s.title||'').toLowerCase().includes(q) || (s.genre||'').toLowerCase().includes(q); });
+            }
+            renderSongs(list);
+        });
+
+        // artist search
+        document.getElementById('artistSearch').addEventListener('input', function(e){
+            var q = e.target.value.trim().toLowerCase();
+            document.querySelectorAll('#artistList .artist-card').forEach(function(card){
+                var name = card.textContent.trim().toLowerCase();
+                card.style.display = name.includes(q) ? '' : 'none';
+            });
+        });
+
+        // Add song for selected artist button behavior
+        document.getElementById('addSongForArtistBtn').addEventListener('click', function(){
+            if (!selectedArtistId) return;
+            var sel = document.querySelector('#addSongModal select[name="artist_id"]');
+            if (sel) sel.value = selectedArtistId;
+            new bootstrap.Modal(document.getElementById('addSongModal')).show();
+        });
+
+        // Global add song button - if an artist is selected, preselect
+        document.getElementById('globalAddSongBtn').addEventListener('click', function(){
+            var sel = document.querySelector('#addSongModal select[name="artist_id"]');
+            if (sel && selectedArtistId) sel.value = selectedArtistId;
+        });
+
+
         // Update preview when new image is selected
         document.querySelector('#editArtistModal input[name="artist_image"]').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -769,6 +1060,47 @@ if(isset($_POST['add_artist'])) {
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
+
+        // Activate tab based on URL hash and keep hash in URL when switching
+        (function(){
+            var hash = window.location.hash || '#songs';
+            var triggerEl = document.querySelector('.nav-link[href="' + hash + '"]');
+            if (triggerEl) {
+                var tab = new bootstrap.Tab(triggerEl);
+                tab.show();
+            }
+
+            document.querySelectorAll('.nav-link[data-bs-toggle="tab"]').forEach(function(el){
+                el.addEventListener('shown.bs.tab', function(e){
+                    var href = e.target.getAttribute('href');
+                    if(history.replaceState) history.replaceState(null, null, href);
+                });
+            });
+        })();
+
+        // Live preview/apply of background when customizing
+        (function(){
+            var pageColorInput = document.querySelector('input[name="page_color"]');
+            var bgTypeSelect = document.querySelector('select[name="bg_type"]');
+            var bgValueInput = document.querySelector('input[name="bg_value"]');
+
+            function applyBgLive(){
+                var type = (bgTypeSelect && bgTypeSelect.value) || '<?php echo $settings['bg_type']; ?>';
+                if(type === 'color'){
+                    var c = (pageColorInput && pageColorInput.value) || '<?php echo htmlspecialchars($settings['page_color'] ?? '#eef2ff'); ?>';
+                    document.body.style.background = c;
+                } else if(type === 'image'){
+                    var url = (bgValueInput && bgValueInput.value) || '<?php echo addslashes($settings['bg_value']); ?>';
+                    if(url) document.body.style.background = 'url("'+url+'") center/cover no-repeat fixed';
+                } else {
+                    document.body.style.background = 'linear-gradient(180deg,#f6f8fb,#eef2ff)';
+                }
+            }
+
+            if(pageColorInput) pageColorInput.addEventListener('input', applyBgLive);
+            if(bgTypeSelect) bgTypeSelect.addEventListener('change', applyBgLive);
+            if(bgValueInput) bgValueInput.addEventListener('input', applyBgLive);
+        })();
     </script>
 </body>
 </html>

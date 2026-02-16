@@ -563,6 +563,64 @@
         .metrics {
             margin-top: 5px;
         }
+        
+        /* Mobile phones: make song details more compact and smaller */ 
+        @media (max-width: 480px) {
+            .song-detail-container {
+                padding: 0.8rem;
+                margin-top: 1rem;
+                max-width: 100%;
+            }
+            .song-detail-header {
+                padding: 0.8rem;
+                gap: 1rem;
+                border-radius: 10px;
+            }
+            .song-detail-header img {
+                height: 120px;
+            }
+            .song-detail-info h1 {
+                font-size: 1.2rem;
+                line-height: 1.1;
+            }
+            .song-detail-info p {
+                font-size: 0.82rem;
+                margin: 0;
+            }
+            .song-detail-info .genre-badge {
+                font-size: 0.72rem;
+                padding: 0.25rem 0.5rem;
+            }
+            .counts {
+                gap: 0.6rem;
+            }
+            .counts small {
+                font-size: 0.72rem;
+            }
+            .btn-download {
+                padding: 0.45rem 0.9rem;
+                font-size: 0.82rem;
+                border-radius: 8px;
+            }
+            .audio-player {
+                height: 30px;
+                border-radius: 10px;
+            }
+            .related-songs h3 {
+                font-size: 1rem;
+            }
+            .related-song-card {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+            .related-song-info h5 {
+                font-size: 0.92rem;
+                margin-bottom: 0.2rem;
+            }
+            .related-song-info small {
+                font-size: 0.72rem;
+            }
+        }
         @media (max-width: 768px) {
             .song-detail-header {
                 grid-template-columns: 1fr;

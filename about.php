@@ -66,11 +66,20 @@
             padding: 0;
             margin: 0;
             list-style: none;
+        }
+
+        /* Default: keep lists horizontal, but target quick-links specifically */
+        .site-footer .quick-links {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0;
+            margin: 0;
+            list-style: none;
             flex-wrap: nowrap;
             overflow: hidden;
         }
 
-        .site-footer ul li {
+        .site-footer .quick-links li {
             margin: 0;
             padding: 0;
             font-size: 0.9rem;
@@ -114,6 +123,20 @@
 
             .site-footer p, .site-footer .text-white-50 {
                 font-size: 0.8rem;
+            }
+
+            /* Make Quick Links vertical on mobile phones */
+            .site-footer .quick-links {
+                flex-direction: column;
+                gap: 0.25rem;
+                align-items: flex-start;
+                overflow: visible;
+            }
+
+            .site-footer .quick-links li {
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
             }
         }
 
@@ -318,7 +341,7 @@
                 </div>
                 <div class="col-lg-4 mb-3">
                     <h5 class="text-white">Quick Links</h5>
-                    <ul class="list-unstyled">
+                    <ul class="list-unstyled quick-links">
                         <li class="mb-2"><a href="index.php" class="text-white-50 text-decoration-none hover-white">Home</a></li>
                         <li class="mb-2"><a href="artists.php" class="text-white-50 text-decoration-none hover-white">Artists</a></li>
                         <li><a href="about.php" class="text-white-50 text-decoration-none hover-white">About</a></li>
