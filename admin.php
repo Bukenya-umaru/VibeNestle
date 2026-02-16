@@ -6,9 +6,11 @@ include 'db_connect.php';
 $settings_file = __DIR__ . DIRECTORY_SEPARATOR . 'admin_settings.json';
 $default_settings = [
     'accent' => '#4c51bf',
-    'bg_type' => 'image', // 'image' or 'color' or 'none'
-        'bg_value' => 'https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg?auto=compress&cs=tinysrgb&w=1600',
-        'page_color' => '#eef2ff',
+    // Background images are disabled for admin customization
+    'bg_type' => 'none',
+    'bg_value' => '',
+    'page_color' => '#ffffff',
+    'night_mode' => 0,
     'card_bg' => '#ffffff',
     'text_color' => '#0f1724',
     'font_size' => '16'
@@ -23,9 +25,11 @@ if(file_exists($settings_file)) {
 // Handle customization save
 if(isset($_POST['save_customization'])) {
     $accent = preg_replace('/[^#A-Fa-f0-9]/', '', $_POST['accent'] ?? $default_settings['accent']);
-    $bg_type = in_array($_POST['bg_type'] ?? '', ['image','color','none']) ? $_POST['bg_type'] : 'image';
-    $bg_value = trim($_POST['bg_value'] ?? '');
-    $page_color = preg_replace('/[^#A-Fa-f0-9]/', '', $_POST['page_color'] ?? $default_settings['page_color']);
+    // Prevent changing background images. Only allow toggling night mode and font size.
+    $bg_type = 'none';
+    $bg_value = '';
+    $page_color = $default_settings['page_color'];
+    $night_mode = isset($_POST['night_mode']) && ($_POST['night_mode'] === '1' || $_POST['night_mode'] === 'on') ? true : false;
     $card_bg = trim($_POST['card_bg'] ?? $default_settings['card_bg']);
     $text_color = trim($_POST['text_color'] ?? $default_settings['text_color']);
     $font_size = preg_replace('/[^0-9]/','', $_POST['font_size'] ?? $default_settings['font_size']);
@@ -33,11 +37,12 @@ if(isset($_POST['save_customization'])) {
     $new = [
         'accent' => $accent ?: $default_settings['accent'],
         'bg_type' => $bg_type,
-        'bg_value' => $bg_value ?: $default_settings['bg_value'],
-        'page_color' => $page_color ?: $default_settings['page_color'],
+        'bg_value' => $bg_value,
+        'page_color' => $page_color,
         'card_bg' => $card_bg ?: $default_settings['card_bg'],
         'text_color' => $text_color ?: $default_settings['text_color'],
-        'font_size' => $font_size ?: $default_settings['font_size']
+        'font_size' => $font_size ?: $default_settings['font_size'],
+        'night_mode' => $night_mode ? 1 : 0
     ];
 
     @file_put_contents($settings_file, json_encode($new, JSON_PRETTY_PRINT));
@@ -443,18 +448,11 @@ if(isset($_POST['add_artist'])) {
         :root{
             --accent: <?php echo htmlspecialchars($settings['accent']); ?>;
             --card-bg: <?php echo htmlspecialchars($settings['card_bg']); ?>;
-            --text-color: <?php echo htmlspecialchars($settings['text_color']); ?>;
+            --text-color: <?php echo ($settings['night_mode'] ? '#eef2ff' : htmlspecialchars($settings['text_color'])); ?>;
             --font-size: <?php echo htmlspecialchars($settings['font_size']); ?>px;
-            --page-bg: <?php echo htmlspecialchars($settings['page_color'] ?? '#eef2ff'); ?>;
+            --page-bg: <?php echo ($settings['night_mode'] ? '#0f1724' : (htmlspecialchars($settings['page_color'] ?? '#ffffff'))); ?>;
         }
-        body { font-family: 'Poppins', sans-serif; color:var(--text-color); font-size:var(--font-size); }
-        <?php if($settings['bg_type'] === 'image'): ?>
-        body { background: url(<?php echo json_encode($settings['bg_value']); ?>) center/cover no-repeat fixed; }
-        <?php elseif($settings['bg_type'] === 'color'): ?>
-        body { background: <?php echo htmlspecialchars($settings['page_color'] ?? $settings['bg_value']); ?>; }
-        <?php else: ?>
-        body { background: linear-gradient(180deg,#f6f8fb,#eef2ff); }
-        <?php endif; ?>
+        body { font-family: 'Poppins', sans-serif; color:var(--text-color); font-size:var(--font-size); background: var(--page-bg); }
         .sidebar { background: linear-gradient(180deg,#ffffff,#fbfbff); min-height:100vh; padding:2rem 1rem; border-right:1px solid rgba(15,23,36,0.04); }
         .main-content { padding:2.25rem; }
         .card { border:none; border-radius:12px; box-shadow:0 8px 30px rgba(15,23,42,0.06); }
@@ -662,28 +660,17 @@ if(isset($_POST['add_artist'])) {
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label class="form-label">Page Background Color</label>
-                                            <input type="color" name="page_color" value="<?php echo htmlspecialchars($settings['page_color'] ?? '#eef2ff'); ?>" class="form-control form-control-color">
+                                            <label class="form-label">Font Size (px)</label>
+                                            <input id="fontSizeInput" type="number" name="font_size" min="12" max="32" value="<?php echo htmlspecialchars($settings['font_size']); ?>" class="form-control">
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label class="form-label">Font Size (px)</label>
-                                            <input type="number" name="font_size" min="12" max="22" value="<?php echo htmlspecialchars($settings['font_size']); ?>" class="form-control">
-                                        </div>
-
-                                        <div class="col-12">
-                                            <label class="form-label">Background Type</label>
-                                            <select name="bg_type" class="form-control">
-                                                <option value="image" <?php echo ($settings['bg_type'] === 'image') ? 'selected' : ''; ?>>Image</option>
-                                                <option value="color" <?php echo ($settings['bg_type'] === 'color') ? 'selected' : ''; ?>>Solid Color</option>
-                                                <option value="none" <?php echo ($settings['bg_type'] === 'none') ? 'selected' : ''; ?>>Default Gradient</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <label class="form-label">Background Value (image URL or color)</label>
-                                            <input type="text" name="bg_value" value="<?php echo htmlspecialchars($settings['bg_value']); ?>" class="form-control" placeholder="Paste an image URL from Pexels or a color hex #">
-                                            <small class="text-muted">Tip: use Pexels images — e.g. https://images.pexels.com/photos/164879/pexels-photo-164879.jpeg</small>
+                                            <label class="form-label">Night Mode</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="nightModeToggle" name="night_mode" <?php echo (!empty($settings['night_mode']) ? 'checked' : ''); ?>>
+                                                <label class="form-check-label" for="nightModeToggle"><?php echo (!empty($settings['night_mode']) ? 'Enabled' : 'Disabled'); ?></label>
+                                            </div>
+                                            <small class="text-muted">Toggle between dark page color and white page color. Background images are disabled.</small>
                                         </div>
 
                                         <div class="col-12">
@@ -1078,28 +1065,32 @@ if(isset($_POST['add_artist'])) {
             });
         })();
 
-        // Live preview/apply of background when customizing
+        // Live preview: night mode toggle and font-size
         (function(){
-            var pageColorInput = document.querySelector('input[name="page_color"]');
-            var bgTypeSelect = document.querySelector('select[name="bg_type"]');
-            var bgValueInput = document.querySelector('input[name="bg_value"]');
+            var nightToggle = document.getElementById('nightModeToggle');
+            var fontInput = document.getElementById('fontSizeInput');
 
-            function applyBgLive(){
-                var type = (bgTypeSelect && bgTypeSelect.value) || '<?php echo $settings['bg_type']; ?>';
-                if(type === 'color'){
-                    var c = (pageColorInput && pageColorInput.value) || '<?php echo htmlspecialchars($settings['page_color'] ?? '#eef2ff'); ?>';
-                    document.body.style.background = c;
-                } else if(type === 'image'){
-                    var url = (bgValueInput && bgValueInput.value) || '<?php echo addslashes($settings['bg_value']); ?>';
-                    if(url) document.body.style.background = 'url("'+url+'") center/cover no-repeat fixed';
+            function applyPreview(){
+                var isNight = nightToggle && nightToggle.checked;
+                if(isNight){
+                    document.documentElement.style.setProperty('--page-bg', '#0f1724');
+                    document.documentElement.style.setProperty('--text-color', '#eef2ff');
                 } else {
-                    document.body.style.background = 'linear-gradient(180deg,#f6f8fb,#eef2ff)';
+                    document.documentElement.style.setProperty('--page-bg', 'linear-gradient(180deg,#f6f8fb,#eef2ff)');
+                    document.documentElement.style.setProperty('--text-color', '<?php echo htmlspecialchars($settings['text_color']); ?>');
+                }
+
+                if(fontInput){
+                    var v = parseInt(fontInput.value) || <?php echo intval($settings['font_size']); ?>;
+                    document.documentElement.style.setProperty('--font-size', v + 'px');
                 }
             }
 
-            if(pageColorInput) pageColorInput.addEventListener('input', applyBgLive);
-            if(bgTypeSelect) bgTypeSelect.addEventListener('change', applyBgLive);
-            if(bgValueInput) bgValueInput.addEventListener('input', applyBgLive);
+            if(nightToggle) nightToggle.addEventListener('change', applyPreview);
+            if(fontInput) fontInput.addEventListener('input', applyPreview);
+
+            // initial apply for page load
+            applyPreview();
         })();
     </script>
 </body>
