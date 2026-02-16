@@ -2128,13 +2128,29 @@
                         <small><i class="fas fa-download me-1"></i><?= $song['download_count'] ?? 0 ?></small>
                     </div>
                     <?php if($song['audio_path']): ?>
+                        <?php
+                            $size_bytes = null;
+                            $size_mb = null;
+                            if (!empty($song['audio_path']) && file_exists($song['audio_path'])) {
+                                $size_bytes = filesize($song['audio_path']);
+                                $size_mb = round($size_bytes / 1048576, 2);
+                            }
+                        ?>
                         <audio class="audio-player" controls data-song-id="<?= $song['id'] ?>">
                             <source src="<?= htmlspecialchars($song['audio_path']) ?>" type="audio/mpeg">
                             Your browser does not support the audio element.
                         </audio>
-                        <a href="<?= htmlspecialchars($song['audio_path']) ?>" download class="btn btn-download" data-song-id="<?= $song['id'] ?>">
-                            <i class="fas fa-download"></i>Download
-                        </a>
+                        <div>
+                            <?php if ($size_mb !== null): ?>
+                                <a href="<?= htmlspecialchars($song['audio_path']) ?>" download class="btn btn-download" data-song-id="<?= $song['id'] ?>">
+                                    <i class="fas fa-download"></i> Download (<?= $size_mb ?> MB)
+                                </a>
+                            <?php else: ?>
+                                <a href="<?= htmlspecialchars($song['audio_path']) ?>" download class="btn btn-download" data-song-id="<?= $song['id'] ?>">
+                                    <i class="fas fa-download"></i> Download (N/A)
+                                </a>
+                            <?php endif; ?>
+                        </div>
                     <?php else: ?>
                         <p class="text-muted small mt-2">Audio not available</p>
                     <?php endif; ?>

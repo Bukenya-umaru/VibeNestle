@@ -348,6 +348,51 @@
             color: #ffffff !important;
             transition: color 0.3s ease;
         }
+
+        /* Compact song cards specifically when viewing an artist on small/mobile screens */
+        @media (max-width: 600px) {
+            /* Show two song cards per row and reduce gutters */
+            #songsList > .col-md-6, #songsList > .col-lg-4 {
+                flex: 0 0 calc(50% - 8px) !important;
+                max-width: calc(50% - 8px) !important;
+                padding-left: 4px !important;
+                padding-right: 4px !important;
+                margin-bottom: 8px !important;
+            }
+
+            /* Compact song card visuals */
+            .song-card {
+                margin-bottom: 6px !important;
+                border-radius: 8px !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+            .song-card img, .song-card .card-img-top {
+                height: 72px !important;
+                object-fit: cover !important;
+                display: block;
+            }
+            .song-card .card-body {
+                padding: 6px 6px !important;
+                background: rgba(255,255,255,0.95) !important;
+            }
+            .song-card .card-title {
+                font-size: 0.82rem !important;
+                margin-bottom: 2px !important;
+                white-space: nowrap !important;
+            }
+            .song-card .card-subtitle {
+                font-size: 0.68rem !important;
+                margin-bottom: 2px !important;
+            }
+            .genre-badge {
+                font-size: 0.6rem !important;
+                padding: 2px 6px !important;
+            }
+            .upload-date small {
+                font-size: 0.6rem !important;
+            }
+        }
     </style>
 </head>
 <body>
