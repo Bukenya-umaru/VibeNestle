@@ -351,46 +351,46 @@
 
         /* Compact song cards specifically when viewing an artist on small/mobile screens */
         @media (max-width: 600px) {
-            /* Show two song cards per row and reduce gutters */
-            #songsList > .col-md-6, #songsList > .col-lg-4 {
-                flex: 0 0 calc(50% - 8px) !important;
-                max-width: calc(50% - 8px) !important;
-                padding-left: 4px !important;
-                padding-right: 4px !important;
-                margin-bottom: 8px !important;
+            /* Show four song cards per row and reduce gutters for very compact view */
+            #songsList > .col-md-6, #songsList > .col-lg-4, #songsList > .song-item {
+                flex: 0 0 calc(25% - 6px) !important;
+                max-width: calc(25% - 6px) !important;
+                padding-left: 3px !important;
+                padding-right: 3px !important;
+                margin-bottom: 6px !important;
             }
 
             /* Compact song card visuals */
             .song-card {
-                margin-bottom: 6px !important;
-                border-radius: 8px !important;
+                margin-bottom: 4px !important;
+                border-radius: 6px !important;
                 background: transparent !important;
                 box-shadow: none !important;
             }
             .song-card img, .song-card .card-img-top {
-                height: 72px !important;
+                height: 64px !important;
                 object-fit: cover !important;
                 display: block;
             }
             .song-card .card-body {
-                padding: 6px 6px !important;
+                padding: 5px 6px !important;
                 background: rgba(255,255,255,0.95) !important;
             }
             .song-card .card-title {
-                font-size: 0.82rem !important;
+                font-size: 0.72rem !important;
                 margin-bottom: 2px !important;
                 white-space: nowrap !important;
             }
             .song-card .card-subtitle {
-                font-size: 0.68rem !important;
+                font-size: 0.62rem !important;
                 margin-bottom: 2px !important;
             }
             .genre-badge {
-                font-size: 0.6rem !important;
-                padding: 2px 6px !important;
+                font-size: 0.55rem !important;
+                padding: 2px 5px !important;
             }
             .upload-date small {
-                font-size: 0.6rem !important;
+                font-size: 0.55rem !important;
             }
         }
     </style>
@@ -460,9 +460,11 @@
                             $songs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                             if (count($songs) > 0) {
+                                $song_index = 0;
                                 foreach ($songs as $song) {
+                                    $idx = $song_index++;
                                     ?>
-                                    <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="song-item col-md-6 col-lg-4 mb-4" data-index="<?= $idx ?>">
                                         <div class="song-card" onclick="window.location.href='index.php?page=song_detail&song_id=<?= $song['id'] ?>'">
                                             <?php if ($song['image_path']): ?>
                                                 <img src="<?= htmlspecialchars($song['image_path']) ?>" class="card-img-top" alt="Album Art">
@@ -492,6 +494,16 @@
                             }
                             ?>
                         </div>
+
+                        <!-- Mobile-only pagination controls (will be shown by JS on small screens) -->
+                        <div id="mobilePagination" class="d-none text-center mt-2">
+                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                <button id="mobilePrev" class="btn btn-sm btn-outline-secondary">Prev</button>
+                                <div id="mobilePageInfo" style="min-width:72px; font-size:0.9rem;">Page 1 / 1</div>
+                                <button id="mobileNext" class="btn btn-sm btn-outline-secondary">Next</button>
+                            </div>
+                        </div>
+
                         <div class="text-center mt-4">
                             <a href="artists.php" class="btn btn-outline-primary">
                                 <i class="fas fa-arrow-left me-2"></i>Back to Artists
@@ -641,6 +653,69 @@
     document.getElementById('searchForm').addEventListener('submit', function() {
         document.getElementById('loadingOverlay').style.display = 'flex';
     });
+    </script>
+
+    <script>
+    // Mobile-only client-side pagination for songs: 8 songs per page, 4 per row
+    (function(){
+        const MOBILE_MAX = 600; // px
+        const ITEMS_PER_PAGE = 8;
+
+        function initMobilePagination(){
+            const songs = Array.from(document.querySelectorAll('#songsList .song-item'));
+            const paginationWrap = document.getElementById('mobilePagination');
+            if (!songs.length) {
+                if (paginationWrap) paginationWrap.classList.add('d-none');
+                return;
+            }
+
+            function showAll(){
+                songs.forEach(el => el.classList.remove('d-none'));
+                if (paginationWrap) paginationWrap.classList.add('d-none');
+            }
+
+            function setup(){
+                if (window.innerWidth > MOBILE_MAX) { showAll(); return; }
+                // mobile behaviour
+                const totalPages = Math.max(1, Math.ceil(songs.length / ITEMS_PER_PAGE));
+                let current = 1;
+
+                const prevBtn = document.getElementById('mobilePrev');
+                const nextBtn = document.getElementById('mobileNext');
+                const info = document.getElementById('mobilePageInfo');
+
+                function render(){
+                    const start = (current - 1) * ITEMS_PER_PAGE;
+                    const end = start + ITEMS_PER_PAGE;
+                    songs.forEach((el, i) => {
+                        if (i >= start && i < end) el.classList.remove('d-none'); else el.classList.add('d-none');
+                    });
+                    if (paginationWrap) paginationWrap.classList.remove('d-none');
+                    if (info) info.textContent = 'Page ' + current + ' / ' + totalPages;
+                    if (prevBtn) prevBtn.disabled = current <= 1;
+                    if (nextBtn) nextBtn.disabled = current >= totalPages;
+                }
+
+                if (prevBtn) prevBtn.addEventListener('click', function(){ if (current>1){ current--; render(); window.scrollTo({top: document.getElementById('songsList').offsetTop-80, behavior:'smooth'}); } });
+                if (nextBtn) nextBtn.addEventListener('click', function(){ if (current<totalPages){ current++; render(); window.scrollTo({top: document.getElementById('songsList').offsetTop-80, behavior:'smooth'}); } });
+
+                // initial render
+                render();
+            }
+
+            // initial setup and on resize
+            setup();
+            let resizeTimer = null;
+            window.addEventListener('resize', function(){
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(setup, 150);
+            });
+        }
+
+        // run when DOM ready
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initMobilePagination);
+        else initMobilePagination();
+    })();
     </script>
 
     <!-- Footer -->
