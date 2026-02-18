@@ -353,44 +353,49 @@
         @media (max-width: 600px) {
             /* Show four song cards per row and reduce gutters for very compact view */
             #songsList > .col-md-6, #songsList > .col-lg-4, #songsList > .song-item {
-                flex: 0 0 calc(25% - 6px) !important;
-                max-width: calc(25% - 6px) !important;
-                padding-left: 3px !important;
-                padding-right: 3px !important;
-                margin-bottom: 6px !important;
+                flex: 0 0 calc(25% - 3px) !important;
+                max-width: calc(25% - 3px) !important;
+                padding-left: 1.5px !important;
+                padding-right: 1.5px !important;
+                margin-bottom: 3px !important;
             }
 
             /* Compact song card visuals */
             .song-card {
-                margin-bottom: 4px !important;
-                border-radius: 6px !important;
+                margin-bottom: 0 !important;
+                border-radius: 4px !important;
                 background: transparent !important;
                 box-shadow: none !important;
+                overflow: hidden;
             }
             .song-card img, .song-card .card-img-top {
-                height: 64px !important;
+                height: 70px !important;
                 object-fit: cover !important;
                 display: block;
+                border-radius: 4px;
             }
             .song-card .card-body {
-                padding: 5px 6px !important;
+                padding: 4px !important;
                 background: rgba(255,255,255,0.95) !important;
+                border-radius: 0 0 4px 4px;
             }
             .song-card .card-title {
-                font-size: 0.72rem !important;
-                margin-bottom: 2px !important;
-                white-space: nowrap !important;
+                font-size: 0.65rem !important;
+                margin-bottom: 0 !important;
+                white-space: normal !important;
+                line-height: 1.1 !important;
+                overflow: visible !important;
+                text-overflow: unset !important;
+                word-wrap: break-word !important;
             }
             .song-card .card-subtitle {
-                font-size: 0.62rem !important;
-                margin-bottom: 2px !important;
+                display: none !important;
             }
             .genre-badge {
-                font-size: 0.55rem !important;
-                padding: 2px 5px !important;
+                display: none !important;
             }
-            .upload-date small {
-                font-size: 0.55rem !important;
+            .upload-date {
+                display: none !important;
             }
         }
     </style>
