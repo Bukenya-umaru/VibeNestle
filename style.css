@@ -334,3 +334,20 @@ body {
         padding-right: 8px;
     }
 }
+
+/* Fix: ensure song titles remain visible in dark mode on mobile phones */
+@media (max-width: 600px) {
+    body.dark-mode .song-card .card-body {
+        background: #2d2d2d !important;
+        color: #f1f1f1 !important;
+    }
+
+    body.dark-mode .song-card .card-title {
+        color: #f1f1f1 !important;
+    }
+
+    /* Also ensure very compact mobile song-card variant uses readable text */
+    body.dark-mode .song-card .card-body {
+        background: linear-gradient(145deg, #2b2b2b, #343434) !important;
+    }
+}
