@@ -397,6 +397,14 @@
             .upload-date {
                 display: none !important;
             }
+
+            /* Compact header for artist songs on mobile */
+            .col-md-8 > h3 {
+                font-size: 1.1rem !important;
+                margin-bottom: 0.75rem !important;
+                font-weight: 600;
+                line-height: 1.2;
+            }
         }
     </style>
 </head>

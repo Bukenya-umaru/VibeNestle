@@ -351,3 +351,19 @@ body {
         background: linear-gradient(145deg, #2b2b2b, #343434) !important;
     }
 }
+
+/* Mobile-only: make the artist songs header very compact on small phones */
+@media (max-width: 480px) {
+    .col-md-8 > h3 {
+        font-size: 0.78rem !important;
+        margin-bottom: 0.25rem !important;
+        font-weight: 600 !important;
+        line-height: 1 !important;
+        letter-spacing: 0.2px;
+    }
+
+    /* Reduce spacing above the songs list slightly to keep things tight */
+    #songsList {
+        margin-top: 4px !important;
+    }
+}
