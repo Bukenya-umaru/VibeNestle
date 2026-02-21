@@ -371,6 +371,53 @@
             .search-container {
                 padding: 0.5rem 0;
             }
+        }
+
+        /* Mobile-only: compact search area on small screens */
+        @media (max-width: 576px) {
+            .search-container {
+                padding: 0.25rem 0.5rem;
+                max-width: 100%;
+                margin: 0 auto;
+            }
+
+            .hero-image {
+                height: 150px !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .hero-image h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            .hero-image p {
+                font-size: 0.9rem !important;
+            }
+
+            .hero-image > div:first-child {
+                padding: 1rem !important;
+            }
+
+            .search-form {
+                max-width: 100%;
+                margin: 0 auto 10px;
+                padding: 0 10px;
+            }
+
+            .search-form .input-group {
+                flex-wrap: wrap;
+            }
+
+            .search-form input {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.5rem;
+            }
+
+            .search-form button {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.75rem;
+            }
 
             /* Mobile Category Cards - One Line with Horizontal Scroll */
             .row.g-4 {
