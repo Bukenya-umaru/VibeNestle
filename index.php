@@ -447,6 +447,10 @@
                 font-size: 1.2rem;
                 letter-spacing: 1px;
             }
+            /* Hide "View Details" on small screens for trending section */
+            .view-details-link {
+                display: none !important;
+            }
         }
 
         @keyframes fadeIn {
@@ -1420,7 +1424,7 @@
                                         </div>
                                     </div>
                                     <div class="ms-auto">
-                                        <a href="?page=song_detail&song_id=<?= $song['id'] ?>" class="text-decoration-none">
+                                        <a href="?page=song_detail&song_id=<?= $song['id'] ?>" class="text-decoration-none view-details-link">
                                             <i class="fas fa-info-circle me-1"></i>View Details
                                         </a>
                                     </div>
@@ -2132,7 +2136,7 @@
                                         </div>
                                     </div>
                                     <div class="ms-auto">
-                                        <a href="?page=song_detail&song_id=<?= $song['id'] ?>" class="text-decoration-none">
+                                        <a href="?page=song_detail&song_id=<?= $song['id'] ?>" class="text-decoration-none view-details-link">
                                             <i class="fas fa-info-circle me-1"></i>View Details
                                         </a>
                                     </div>
