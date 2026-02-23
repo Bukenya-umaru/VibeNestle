@@ -916,6 +916,54 @@
                 width: auto;
             }
         }
+        /* Very small phones: make trending song cards compact and tiny */
+        @media (max-width: 480px) {
+            .trending-card {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+                padding: 6px;
+            }
+
+            .trending-card img {
+                width: 48px;
+                height: 48px;
+                max-width: none;
+                max-height: none;
+                object-fit: cover;
+                border-radius: 6px;
+                margin-bottom: 0;
+            }
+
+            .trending-card .card-body {
+                padding: 4px 6px;
+            }
+
+            .trending-card .card-title {
+                font-size: 0.85rem;
+                margin: 0;
+                line-height: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .trending-card .card-text {
+                display: none;
+            }
+
+            .trending-card .metrics { 
+                display: none; /* hide extra metrics to keep card compact */
+            }
+
+            .rank-number {
+                font-size: 1rem;
+                width: 28px;
+                margin-right: 4px;
+                text-align: center;
+            }
+        }
         .btn-outline-primary {
             color: var(--primary-color);
             border-color: var(--primary-color);
