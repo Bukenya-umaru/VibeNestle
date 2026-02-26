@@ -82,7 +82,7 @@
         .site-footer .quick-links li {
             margin: 0;
             padding: 0;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
